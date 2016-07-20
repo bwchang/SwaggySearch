@@ -15,7 +15,7 @@ ant build
 This will compile all the files necessary. To launch the search engine, simply run:
 
 ```
-ant Main
+ant SwaggySearch
 ```
 This will bring up a separate window. Enter your search term(s) in the text field on top, and your search results will appear in the text area below the search field, organized by decreasing relevance.
 

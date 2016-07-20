@@ -17,14 +17,14 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class Main extends JPanel implements ActionListener {
+public class SwaggySearch extends JPanel implements ActionListener {
 
 	protected JTextField textField;
     protected JTextArea textArea;
     private final static String newline = "\n";
     private JedisIndex index;
 
-    public Main() {
+    public SwaggySearch() {
         super(new GridBagLayout());
 
         textField = new JTextField(50);
@@ -75,7 +75,7 @@ public class Main extends JPanel implements ActionListener {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Add contents to the window.
-        frame.add(new Main());
+        frame.add(new SwaggySearch());
 
         //Display the window.
         frame.pack();
