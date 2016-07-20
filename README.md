@@ -1,8 +1,8 @@
-# cs-application-retrieval-lab
+# SwaggySearch
 
-## Title/team/etc
+## About
 
-About
+About... idk how detailed we need to be
 
 
 ## Usage
