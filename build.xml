@@ -351,8 +351,8 @@
             <classpath refid="JavaCS.classpath"/>
         </java>
     </target>
-    <target name="Main">
-        <java classname="com.flatironschool.javacs.Main" failonerror="true" fork="yes">
+    <target name="SwaggySearch">
+        <java classname="com.flatironschool.javacs.SwaggySearch" failonerror="true" fork="yes">
             <env key="REDISTOGO_AUTH" value="2979811b19fe8895c14425ed5e694107"/>
             <classpath refid="JavaCS.classpath"/>
         </java>
