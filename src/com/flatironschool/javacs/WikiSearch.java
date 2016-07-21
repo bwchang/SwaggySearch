@@ -133,15 +133,14 @@ public class WikiSearch {
 	 * @return List of entries with URL and relevance.
 	 */
 	public List<Entry<String, Integer>> sort() {
-        // FILL THIS IN!
         List<Entry<String, Integer>> list = new LinkedList<Entry<String, Integer>>(map.entrySet());
 		Comparator<Entry<String, Integer>> comparator = new Comparator<Entry<String, Integer>>() {
 			@Override
 			public int compare(Entry<String, Integer> entry1, Entry<String, Integer> entry2) {
 				if (entry1.getValue() < entry2.getValue()) {
-					return -1;
-				} else if (entry1.getValue() > entry2.getValue()) {
 					return 1;
+				} else if (entry1.getValue() > entry2.getValue()) {
+					return -1;
 				} else {
 					return 0;
 				}
@@ -163,7 +162,7 @@ public class WikiSearch {
 		return new WikiSearch(map);
 	}
 
-	public static void main(String[] args) throws IOException {
+	/*public static void main(String[] args) throws IOException {
 		
 		// make a JedisIndex
 		Jedis jedis = JedisMaker.make();
@@ -185,5 +184,5 @@ public class WikiSearch {
 		System.out.println("Query: " + term1 + " AND " + term2);
 		WikiSearch intersection = search1.and(search2);
 		intersection.print();
-	}
+	}*/
 }

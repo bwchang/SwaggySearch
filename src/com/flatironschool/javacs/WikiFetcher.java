@@ -45,7 +45,7 @@ public class WikiFetcher {
 	 * @return
 	 * @throws IOException
 	 */
-	public Elements readWikipedia(String url) throws IOException {
+	/*public Elements readWikipedia(String url) throws IOException {
 		URL realURL = new URL(url);
 
 		// assemble the file name
@@ -60,7 +60,7 @@ public class WikiFetcher {
 		Element content = doc.getElementById("mw-content-text");
 		Elements paras = content.select("p");
 		return paras;
-	}
+	}*/
 
 	/**
 	 * Rate limits by waiting at least the minimum interval between requests.

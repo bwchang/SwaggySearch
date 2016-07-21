@@ -54,24 +54,24 @@ public class WikiCrawler {
 	 * @return Number of pages indexed.
 	 * @throws IOException
 	 */
-	public String crawl(boolean testing) throws IOException {
+	public String crawl() throws IOException {
         if (queue.isEmpty()) {
             return null;
         }
         String url = queue.poll();
         System.out.println("Crawling " + url);
  
-        if (testing==false && index.isIndexed(url)) {
+        if (index.isIndexed(url)) {
             System.out.println("Already indexed.");
             return null;
         }
  
-        Elements paragraphs;
-        if (testing) {
+        Elements paragraphs = wf.fetchWikipedia(url);
+        /*if (testing) {
             paragraphs = wf.readWikipedia(url);
         } else {
             paragraphs = wf.fetchWikipedia(url);
-        }
+        }*/
         index.indexPage(url, paragraphs);
         queueInternalLinks(paragraphs);
         return url;
@@ -115,13 +115,13 @@ public class WikiCrawler {
 
 		// loop until we index a new page
 		String res;
+		/*int i = 0;
+		while (i < 100) {
+			res = wc.crawl();
+			i++;
+		}*/
 		do {
-			res = wc.crawl(false);
+			res = wc.crawl();
 		} while (res == null);
-		
-		Map<String, Integer> map = index.getCounts("the");
-		for (Entry<String, Integer> entry: map.entrySet()) {
-			System.out.println(entry);
-		}
 	}
 }
