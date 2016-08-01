@@ -62,7 +62,7 @@ public class SwaggySearch extends JPanel implements ActionListener {
         WikiSearch search = WikiSearch.search(text, index);
         List<Entry<String, Integer>> entries = search.sort();
 		for (Entry<String, Integer> entry: entries) {
-			textArea.append(entry.toString() + newline);
+			textArea.append(entry.getKey().toString() + newline);
 		}
 
         textField.selectAll();
