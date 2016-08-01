@@ -24,6 +24,10 @@ public class SwaggySearch extends JPanel implements ActionListener {
     private final static String newline = "\n";
     private JedisIndex index;
 
+    private static int AND_LENGTH = 5;
+    private static int OR_LENGTH = 4;
+    private static int NOT_LENGTH = 5;
+
     public SwaggySearch() {
         super(new GridBagLayout());
 
@@ -34,7 +38,6 @@ public class SwaggySearch extends JPanel implements ActionListener {
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea);
 
-        //Add Components to this panel.
         GridBagConstraints c = new GridBagConstraints();
         c.gridwidth = GridBagConstraints.REMAINDER;
 
@@ -58,15 +61,62 @@ public class SwaggySearch extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent evt) {
     	textArea.setText("");
 
-        String text = textField.getText();
-        WikiSearch search = WikiSearch.search(text, index);
+        String text = textField.getText().trim();
+        
+        // handle AND, OR, MINUS cases
+        WikiSearch search = searchFromString(text);
+
         List<Entry<String, Integer>> entries = search.sort();
-		for (Entry<String, Integer> entry: entries) {
-			textArea.append(entry.getKey().toString() + newline);
-		}
+
+        // handle empty cases
+        if (entries.isEmpty()) {
+            textArea.append("Sorry, we found no matches for your search terms.");
+        }
+
+        // limit to ten results
+        if (entries.size() <= 10) {
+            for (Entry<String, Integer> entry: entries) {
+                textArea.append(entry.getKey().toString() + newline);
+            }
+        } else {
+            for (Entry<String, Integer> entry: entries.subList(0, 10)) {
+                textArea.append(entry.getKey().toString() + newline);
+            }
+        }
 
         textField.selectAll();
         textArea.setCaretPosition(textArea.getDocument().getLength());
+    }
+
+    private WikiSearch searchFromString(String text) {
+        WikiSearch search;
+
+        if (text.contains(" AND ")) {
+            int start = text.indexOf(" AND ");
+            String first = text.substring(0, start).toLowerCase().trim();
+            String second = text.substring(start + AND_LENGTH).toLowerCase().trim();
+            WikiSearch firstSearch = WikiSearch.search(first, index);
+            WikiSearch secondSearch = WikiSearch.search(second, index);
+            search = firstSearch.and(secondSearch);
+        } else if (text.contains(" OR ")) {
+            int start = text.indexOf(" OR ");
+            String first = text.substring(0, start).toLowerCase().trim();
+            String second = text.substring(start + AND_LENGTH).toLowerCase().trim();
+            WikiSearch firstSearch = WikiSearch.search(first, index);
+            WikiSearch secondSearch = WikiSearch.search(second, index);
+            search = firstSearch.or(secondSearch);
+        } else if (text.contains(" NOT ")) {
+            int start = text.indexOf(" NOT ");
+            String first = text.substring(0, start).toLowerCase().trim();
+            String second = text.substring(start + AND_LENGTH).toLowerCase().trim();
+            WikiSearch firstSearch = WikiSearch.search(first, index);
+            WikiSearch secondSearch = WikiSearch.search(second, index);
+            search = firstSearch.minus(secondSearch);
+        } else {
+            search = WikiSearch.search(text.toLowerCase(), index);
+        }
+
+        return search;
     }
 
     private static void createAndShowGUI() {
@@ -83,8 +133,6 @@ public class SwaggySearch extends JPanel implements ActionListener {
     }
 
 	public static void main(String[] args) {
-		//Schedule a job for the event dispatch thread:
-        //creating and showing this application's GUI.
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 createAndShowGUI();

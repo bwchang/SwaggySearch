@@ -32,10 +32,6 @@ To display the pages containing both the terms "apples" *and* "oranges", type in
 ```
 apples AND oranges
 ```
-or
-```
-apples + oranges
-```
 and press enter.
 
 
@@ -43,19 +39,11 @@ To display the pages containing either "apple" *or* "oranges", type in
 ```
 apples OR oranges
 ```
-or
-```
-apples | oranges
-```
 and press enter.
 
 
 To display the pages containing the term "apple" but *not* the term "oranges", type in
 ```
 apples NOT oranges
-```
-or
-```
-apples - oranges
 ```
 and press enter.
