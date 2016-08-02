@@ -41,43 +41,16 @@ public class SwaggySearch extends JFrame implements ActionListener {
     SimpleAttributeSet attr;
 
     public SwaggySearch() {
-        /*super(new GridBagLayout());
-
-        textField = new JTextField(50);
-        textField.addActionListener(this);
-
-        textArea = new JTextArea(20, 50);
-        textArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(textPane);
-
-        textPane = new JTextPane();
-
-        Container c = getContentPane();
-        c.add(textField,BorderLayout.NORTH);
-        c.add(scrollPane);
-
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridwidth = GridBagConstraints.REMAINDER;
-
-        c.fill = GridBagConstraints.HORIZONTAL;
-        add(textField, c);
-
-        c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        add(scrollPane, c);*/
-
         try {
         	Jedis jedis = JedisMaker.make();
 			index = new JedisIndex(jedis);
         } catch (IOException e) {
         	System.out.println("error");
         }
-
     }
 
     public void actionPerformed(ActionEvent evt) {
-    	//textArea.setText("");
+    	textPane.setText("");
 
         String text = textField.getText().trim();
         
@@ -98,16 +71,12 @@ public class SwaggySearch extends JFrame implements ActionListener {
             formatAndInsertButton(button);
         } else {
             try {
-                doc.insertString(0, "Start:" + newline, null);
-            } catch (Exception e) {
-
-            }
-            
+                doc.insertString(0, "Top 10 search results:" + newline, null);
+            } catch (Exception e) {}   
         }
 
         // limit to ten results
         for (Entry<String, Integer> entry: firstTen(entries)) {
-            //textArea.append(entry.getKey() + newline);
             JButton button = new JButton();
             button.setText(entry.getKey());
             hyperlinkButton(button);
@@ -115,16 +84,18 @@ public class SwaggySearch extends JFrame implements ActionListener {
         }
 
         textField.selectAll();
-        //textArea.setCaretPosition(textArea.getDocument().getLength());
+        textPane.setCaretPosition(textPane.getDocument().getLength());
     }
 
     private void formatAndInsertButton(JButton button) {
-        //button.setHorizontalAlignment(SwingConstants.LEFT);
+        button.setHorizontalAlignment(SwingConstants.LEFT);
         button.setBorderPainted(false);
         button.setOpaque(false);
         button.setBackground(Color.WHITE);
-        //button.setToolTipText(uri.toString());
-        textPane.getDocument().putProperty(DefaultEditorKit.EndOfLineStringProperty, "\n");
+        try {
+            doc.insertString(doc.getLength(), newline, null);
+        } catch (Exception e) {}
+        
         textPane.insertComponent(button);
     }
 
@@ -202,20 +173,10 @@ public class SwaggySearch extends JFrame implements ActionListener {
     }
 
     private void createAndShowGUI() {
-        //Create and set up the window.
-        /*JFrame frame = new JFrame("Main");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        //Add contents to the window.
-        frame.add(new SwaggySearch());
-
-        //Display the window.
-        frame.pack();
-        frame.setVisible(true);*/
-
         setTitle("SwaggySearch");
         textField = new JTextField(10);
         textPane = new JTextPane();
+        textPane.setEditable(false);
         click = new JButton("Search");
         doc = textPane.getStyledDocument();
         attr = new SimpleAttributeSet();
@@ -234,17 +195,8 @@ public class SwaggySearch extends JFrame implements ActionListener {
         setVisible(true);
     }
 
-	/*public static void main(String[] args) {
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                createAndShowGUI();
-            }
-        });
-	}*/
-
     public static void main(String[] args) throws URISyntaxException
     {
-        //uri = new URI("http://java.sun.com");
         SwingUtilities.invokeLater( new Runnable()
         {
             @Override
