@@ -16,27 +16,45 @@ import redis.clients.jedis.Jedis;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.text.*;
+import javax.swing.border.*;
 
-public class SwaggySearch extends JPanel implements ActionListener {
+import java.net.URI;
+import java.io.IOException;
+import java.net.URISyntaxException;
+
+public class SwaggySearch extends JFrame implements ActionListener {
 
 	protected JTextField textField;
     protected JTextArea textArea;
+    protected JTextPane textPane;
     private final static String newline = "\n";
     private JedisIndex index;
+    protected JButton click;
 
     private static int AND_LENGTH = 5;
     private static int OR_LENGTH = 4;
     private static int NOT_LENGTH = 5;
 
+    protected static URI uri;
+    StyledDocument doc;
+    SimpleAttributeSet attr;
+
     public SwaggySearch() {
-        super(new GridBagLayout());
+        /*super(new GridBagLayout());
 
         textField = new JTextField(50);
         textField.addActionListener(this);
 
         textArea = new JTextArea(20, 50);
         textArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(textArea);
+        JScrollPane scrollPane = new JScrollPane(textPane);
+
+        textPane = new JTextPane();
+
+        Container c = getContentPane();
+        c.add(textField,BorderLayout.NORTH);
+        c.add(scrollPane);
 
         GridBagConstraints c = new GridBagConstraints();
         c.gridwidth = GridBagConstraints.REMAINDER;
@@ -47,7 +65,7 @@ public class SwaggySearch extends JPanel implements ActionListener {
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;
         c.weighty = 1.0;
-        add(scrollPane, c);
+        add(scrollPane, c);*/
 
         try {
         	Jedis jedis = JedisMaker.make();
@@ -55,37 +73,56 @@ public class SwaggySearch extends JPanel implements ActionListener {
         } catch (IOException e) {
         	System.out.println("error");
         }
-        
+
     }
 
     public void actionPerformed(ActionEvent evt) {
-    	textArea.setText("");
+    	//textArea.setText("");
 
         String text = textField.getText().trim();
         
-        // handle AND, OR, MINUS cases
         WikiSearch search = searchFromString(text);
 
         List<Entry<String, Integer>> entries = search.sort();
 
+        class OpenUrlAction implements ActionListener {
+            @Override public void actionPerformed(ActionEvent e) {
+                open(uri);
+            }
+        }
+
         // handle empty cases
         if (entries.isEmpty()) {
-            textArea.append("Sorry, we found no matches for your search terms.");
+            //textArea.append("Sorry, we found no matches for your search terms.");
+            JButton button = new JButton();
+            button.setText("Sorry, we found no matches for your search terms.");
+            formatAndInsertButton(button);
         }
 
         // limit to ten results
-        if (entries.size() <= 10) {
-            for (Entry<String, Integer> entry: entries) {
-                textArea.append(entry.getKey().toString() + newline);
-            }
-        } else {
-            for (Entry<String, Integer> entry: entries.subList(0, 10)) {
-                textArea.append(entry.getKey().toString() + newline);
-            }
+        for (Entry<String, Integer> entry: firstTen(entries)) {
+            //textArea.append(entry.getKey() + newline);
         }
 
         textField.selectAll();
-        textArea.setCaretPosition(textArea.getDocument().getLength());
+        //textArea.setCaretPosition(textArea.getDocument().getLength());
+    }
+
+    private void formatAndInsertButton(JButton button) {
+        button.setHorizontalAlignment(SwingConstants.LEFT);
+        button.setBorderPainted(false);
+        button.setOpaque(false);
+        button.setBackground(Color.WHITE);
+        //button.setToolTipText(uri.toString());
+        textPane.insertComponent(button);
+    }
+
+    private List<Entry<String, Integer>> firstTen(List<Entry<String, Integer>> list) {
+        if (list.size() <= 10) {
+            return list;
+        } else {
+            return list.subList(0, 10);
+        }
     }
 
     private WikiSearch searchFromString(String text) {
@@ -119,9 +156,9 @@ public class SwaggySearch extends JPanel implements ActionListener {
         return search;
     }
 
-    private static void createAndShowGUI() {
+    private void createAndShowGUI() {
         //Create and set up the window.
-        JFrame frame = new JFrame("Main");
+        /*JFrame frame = new JFrame("Main");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Add contents to the window.
@@ -129,14 +166,55 @@ public class SwaggySearch extends JPanel implements ActionListener {
 
         //Display the window.
         frame.pack();
-        frame.setVisible(true);
+        frame.setVisible(true);*/
+
+        setTitle("SwaggySearch");
+        textField = new JTextField(10);
+        textPane = new JTextPane();
+        click = new JButton("Search");
+        doc = textPane.getStyledDocument();
+        attr = new SimpleAttributeSet();
+        JScrollPane pane = new JScrollPane(textPane);
+        JPanel nPanel = new JPanel();
+        nPanel.add(textField);nPanel.add(click);
+        textField.addActionListener(this);
+        click.addActionListener(this);
+        Container c = getContentPane();
+        c.add(nPanel,BorderLayout.NORTH);
+        c.add(pane);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(500,400);
+        setLocationRelativeTo(null);
+        setVisible(true);
     }
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 createAndShowGUI();
             }
         });
-	}
+	}*/
+
+    public static void main(String[] args) throws URISyntaxException
+    {
+        //uri = new URI("http://java.sun.com");
+        SwingUtilities.invokeLater( new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                SwaggySearch lta = new SwaggySearch();
+                lta.createAndShowGUI();
+            }
+        });
+    }
+
+    private static void open(URI uri) {
+        if (Desktop.isDesktopSupported()) {
+          try {
+            Desktop.getDesktop().browse(uri);
+          } catch (IOException e) { /* TODO: error handling */ }
+        } else { /* TODO: error handling */ }
+    }
 }
