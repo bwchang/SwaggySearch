@@ -36,7 +36,7 @@ public class SwaggySearch extends JFrame implements ActionListener {
     private static int OR_LENGTH = 4;
     private static int NOT_LENGTH = 5;
 
-    protected static URI uri;
+    protected URI uri;
     StyledDocument doc;
     SimpleAttributeSet attr;
 
@@ -93,15 +93,25 @@ public class SwaggySearch extends JFrame implements ActionListener {
 
         // handle empty cases
         if (entries.isEmpty()) {
-            //textArea.append("Sorry, we found no matches for your search terms.");
             JButton button = new JButton();
             button.setText("Sorry, we found no matches for your search terms.");
             formatAndInsertButton(button);
+        } else {
+            try {
+                doc.insertString(0, "Start:" + newline, null);
+            } catch (Exception e) {
+
+            }
+            
         }
 
         // limit to ten results
         for (Entry<String, Integer> entry: firstTen(entries)) {
             //textArea.append(entry.getKey() + newline);
+            JButton button = new JButton();
+            button.setText(entry.getKey());
+            hyperlinkButton(button);
+            formatAndInsertButton(button);
         }
 
         textField.selectAll();
@@ -109,12 +119,47 @@ public class SwaggySearch extends JFrame implements ActionListener {
     }
 
     private void formatAndInsertButton(JButton button) {
-        button.setHorizontalAlignment(SwingConstants.LEFT);
+        //button.setHorizontalAlignment(SwingConstants.LEFT);
         button.setBorderPainted(false);
         button.setOpaque(false);
         button.setBackground(Color.WHITE);
         //button.setToolTipText(uri.toString());
+        textPane.getDocument().putProperty(DefaultEditorKit.EndOfLineStringProperty, "\n");
         textPane.insertComponent(button);
+    }
+
+    private void hyperlinkButton(final JButton button) {
+        final String s = button.getText();
+        final URI uri = getURI(s);
+        if (uri != null) {
+            button.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseExited(MouseEvent arg0) {
+                    button.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                    button.setText(s);
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent arg0) {
+                    button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    button.setText(String.format("<HTML><FONT color = \"#000099\"><U>%s</U></FONT></HTML>", s));
+                }
+
+                @Override
+                public void mouseClicked(MouseEvent arg0) {
+                    open(uri);
+                }
+            });
+        }
+    }
+
+    private URI getURI(String url) {
+        try {
+            uri = new URI(url);
+            return uri;
+        } catch (URISyntaxException e) {
+            return null;
+        }
     }
 
     private List<Entry<String, Integer>> firstTen(List<Entry<String, Integer>> list) {
@@ -176,7 +221,8 @@ public class SwaggySearch extends JFrame implements ActionListener {
         attr = new SimpleAttributeSet();
         JScrollPane pane = new JScrollPane(textPane);
         JPanel nPanel = new JPanel();
-        nPanel.add(textField);nPanel.add(click);
+        nPanel.add(textField);
+        nPanel.add(click);
         textField.addActionListener(this);
         click.addActionListener(this);
         Container c = getContentPane();
