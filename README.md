@@ -17,7 +17,7 @@ This will compile all the files necessary. To launch the search engine, simply r
 ```
 ant SwaggySearch
 ```
-This will bring up a separate window. Enter your search term(s) in the text field on top, and your search results will appear in the text area below the search field, organized by decreasing relevance.
+This will bring up a separate window. Enter your search term(s) in the text field on top, and your top ten search results will appear in the text area below the search field, organized by decreasing relevance.
 
 ## Search Examples
 
@@ -47,3 +47,9 @@ To display the pages containing the term "apple" but *not* the term "oranges", t
 apples NOT oranges
 ```
 and press enter.
+
+## Features
+These are the features we added to improve SwaggySearch:
+1. GUI
+2. Fuzzy Search
+3. TF-IDF

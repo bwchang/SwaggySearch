@@ -53,6 +53,13 @@ public class SwaggySearch extends JFrame implements ActionListener {
     	textPane.setText("");
 
         String text = textField.getText().trim();
+
+        if (text.equals("")) {
+            JButton button = new JButton();
+            button.setText("Please enter a search term.");
+            formatAndInsertButton(button);
+            return;
+        }
         
         WikiSearch search = searchFromString(text);
 
