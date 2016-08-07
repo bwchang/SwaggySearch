@@ -55,6 +55,8 @@ public class SwaggySearch extends JFrame implements ActionListener {
 
     public void actionPerformed(ActionEvent evt) {
 
+        textPane.setText("");
+
         String text = textField.getText().trim();
 
         if (text.equals("")) {
