@@ -23,6 +23,8 @@ public class WikiSearch {
 	// map from URLs that contain the term(s) to relevance score
 	private Map<String, Integer> map;
 
+	private JedisIndex index;
+
 	/**
 	 * Constructor.
 	 * 
@@ -30,6 +32,10 @@ public class WikiSearch {
 	 */
 	public WikiSearch(Map<String, Integer> map) {
 		this.map = map;
+		try {
+			Jedis jedis = JedisMaker.make();
+			index = new JedisIndex(jedis);
+		} catch (IOException e) {}
 	}
 	
 	/**
@@ -39,8 +45,13 @@ public class WikiSearch {
 	 * @return
 	 */
 	public Integer getRelevance(String url) {
-		Integer relevance = map.get(url);
-		return relevance==null ? 0: relevance;
+		Integer tf = map.get(url);
+		if (tf == null) {
+			return 0;
+		}
+		Double idf = java.lang.Math.log(index.size() / map.size());
+		Integer relevance = tf * idf.intValue();
+		return relevance;
 	}
 	
 	/**
@@ -62,7 +73,6 @@ public class WikiSearch {
 	 * @return New WikiSearch object.
 	 */
 	public WikiSearch or(WikiSearch that) {
-        // FILL THIS IN!
 		Map<String, Integer> union = new HashMap<String, Integer>();
 		Set<Entry<String, Integer>> unionKeySet = new HashSet<Entry<String, Integer>>(this.sort());
 		unionKeySet.addAll(that.sort());
@@ -71,7 +81,8 @@ public class WikiSearch {
 			int firstValue = this.getRelevance(key);
 			int secondValue = that.getRelevance(key);
 			if (firstValue != 0 && secondValue != 0) {
-				union.put(key, firstValue + secondValue);
+				int totalValue = java.lang.Math.max(totalRelevance(firstValue, secondValue), java.lang.Math.max(firstValue, secondValue));
+				union.put(key, totalValue);
 			} else if (firstValue != 0) {
 				union.put(key, firstValue);
 			} else {
@@ -88,11 +99,10 @@ public class WikiSearch {
 	 * @return New WikiSearch object.
 	 */
 	public WikiSearch and(WikiSearch that) {
-        // FILL THIS IN!
 		Map<String, Integer> intersection = new HashMap<String, Integer>();
 		for (String key : map.keySet()) {
 			if (that.getRelevance(key) != 0) {
-				intersection.put(key, this.getRelevance(key) + that.getRelevance(key));
+				intersection.put(key, totalRelevance(this.getRelevance(key), that.getRelevance(key)));
 			}
 		}
 		return new WikiSearch(intersection);
@@ -105,7 +115,6 @@ public class WikiSearch {
 	 * @return New WikiSearch object.
 	 */
 	public WikiSearch minus(WikiSearch that) {
-        // FILL THIS IN!
 		Map<String, Integer> minus = new HashMap<String, Integer>();
 		for (String key : map.keySet()) {
 			if (that.getRelevance(key) == 0) {
@@ -123,8 +132,7 @@ public class WikiSearch {
 	 * @return
 	 */
 	protected int totalRelevance(Integer rel1, Integer rel2) {
-		// simple starting place: relevance is the sum of the term frequencies.
-		return rel1 + rel2;
+		return (rel1 + rel2) / 2;
 	}
 
 	/**
@@ -137,9 +145,11 @@ public class WikiSearch {
 		Comparator<Entry<String, Integer>> comparator = new Comparator<Entry<String, Integer>>() {
 			@Override
 			public int compare(Entry<String, Integer> entry1, Entry<String, Integer> entry2) {
-				if (entry1.getValue() < entry2.getValue()) {
+				int firstValue = getRelevance(entry1.getKey());
+				int secondValue = getRelevance(entry2.getKey());
+				if (firstValue < secondValue) {
 					return 1;
-				} else if (entry1.getValue() > entry2.getValue()) {
+				} else if (firstValue > secondValue) {
 					return -1;
 				} else {
 					return 0;
