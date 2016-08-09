@@ -2,8 +2,7 @@
 
 ## About
 
-About... idk how detailed we need to be
-
+Our search engine is called SwaggySearch. We have focused on improving user experience by providing a GUI, reducing search time by implementing the TF-IDF algorithm and increasing search accuracy by implementing fuzzy search.
 
 ## Usage
 
@@ -21,7 +20,7 @@ This will bring up a separate window. Enter your search term(s) in the text fiel
 
 ## Search Examples
 
-To search for "apples", you simply type in 
+To search for "apples", you simply type in
 ```
 apples
 ```
@@ -51,5 +50,5 @@ and press enter.
 ## Features
 These are the features we added to improve SwaggySearch:
 * GUI
-* Fuzzy Search
+* Fuzzy Search - Note: Currently, this feature only works for single search words.
 * TF-IDF
