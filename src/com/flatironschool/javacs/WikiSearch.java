@@ -49,9 +49,10 @@ public class WikiSearch {
 		if (tf == null) {
 			return 0;
 		}
-		Double idf = java.lang.Math.log(index.size() / map.size());
-		Integer relevance = tf * idf.intValue();
-		return relevance;
+		// idf is not logged because of Redis size limitations
+		Integer idf = index.size() / map.size();
+		Integer relevance = tf * idf;
+		return relevance.intValue();
 	}
 	
 	/**
@@ -59,7 +60,7 @@ public class WikiSearch {
 	 * 
 	 * @param map
 	 */
-	private  void print() {
+	public void print() {
 		List<Entry<String, Integer>> entries = sort();
 		for (Entry<String, Integer> entry: entries) {
 			System.out.println(entry);

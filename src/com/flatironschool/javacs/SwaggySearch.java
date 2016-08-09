@@ -177,8 +177,11 @@ public class SwaggySearch extends JFrame implements ActionListener {
             String first = text.substring(0, start).toLowerCase().trim();
             String second = text.substring(start + AND_LENGTH).toLowerCase().trim();
             WikiSearch firstSearch = WikiSearch.search(first, index);
+            //firstSearch.print();
             WikiSearch secondSearch = WikiSearch.search(second, index);
+            //secondSearch.print();
             search = firstSearch.and(secondSearch);
+            search.print();
         } else if (text.contains(" OR ")) {
             int start = text.indexOf(" OR ");
             String first = text.substring(0, start).toLowerCase().trim();
