@@ -168,7 +168,7 @@ public class WikiSearch {
 	 * @return
 	 */
 	public static WikiSearch search(String term, JedisIndex index) {
-		Map<String, Integer> map = index.getCounts(term);
+		Map<String, Integer> map = index.getCountsFaster(term);
 		return new WikiSearch(map);
 	}
 

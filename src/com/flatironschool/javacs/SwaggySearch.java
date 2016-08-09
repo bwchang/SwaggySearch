@@ -240,7 +240,11 @@ public class SwaggySearch extends JFrame implements ActionListener {
         if (Desktop.isDesktopSupported()) {
           try {
             Desktop.getDesktop().browse(uri);
-          } catch (IOException e) { /* TODO: error handling */ }
-        } else { /* TODO: error handling */ }
+          } catch (IOException e) {
+            System.out.println("Error opening links.");
+          }
+        } else {
+            System.out.println("Error opening links.");
+        }
     }
 	}
