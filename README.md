@@ -1,8 +1,8 @@
 # SwaggySearch
 
-## About
+## Project Goals
 
-About... idk how detailed we need to be
+SwaggySearch is a simple, intuitive, and easy-to-use Wikipedia search engine. Our goals for SwaggySearch was to make it extremely user-friendly, which we accomplished by implementing a GUI for the user to input search terms and see results. We also wanted greater precision by accounting for typos. Finally, we improved search logic by implementing TF-IDF and changing the way AND searches calculate relevance.
 
 
 ## Usage
@@ -50,6 +50,6 @@ and press enter.
 
 ## Features
 These are the features we added to improve SwaggySearch:
-* GUI
-* Fuzzy Search
-* TF-IDF
+* GUI - a simple, intuitive GUI made using JFrame that allows user to input a search term, and displays the top ten search results with hyperlinks.
+* Fuzzy Search - a very simple implementation that maximises the probability of searching for a word in a pre-defined dictionary. It uses deletion, transposition, replacement and insertion to get the highest probability.
+* Search logic - implemented TF-IDF to prioritize results, as well as averaging relevance instead of adding for AND searches to account for worst-case searches.
