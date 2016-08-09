@@ -107,6 +107,7 @@ public class WikiCrawler {
 		Jedis jedis = JedisMaker.make();
 		JedisIndex index = new JedisIndex(jedis); 
 		String source = "https://en.wikipedia.org/wiki/Java_(programming_language)";
+		//String source = "https://en.wikipedia.org/wiki/Computer_programming";
 		WikiCrawler wc = new WikiCrawler(source, index);
 		
 		// for testing purposes, load up the queue
@@ -115,11 +116,11 @@ public class WikiCrawler {
 
 		// loop until we index a new page
 		String res;
-		/*int i = 0;
+		int i = 0;
 		while (i < 100) {
 			res = wc.crawl();
 			i++;
-		}*/
+		}
 		do {
 			res = wc.crawl();
 		} while (res == null);

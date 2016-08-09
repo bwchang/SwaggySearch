@@ -50,6 +50,6 @@ and press enter.
 
 ## Features
 These are the features we added to improve SwaggySearch:
-1. GUI
-2. Fuzzy Search
-3. TF-IDF
+* GUI
+* Fuzzy Search
+* TF-IDF

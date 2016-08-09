@@ -55,6 +55,8 @@ public class SwaggySearch extends JFrame implements ActionListener {
 
     public void actionPerformed(ActionEvent evt) {
 
+        textPane.setText("");
+
         String text = textField.getText().trim();
 
         if (text.equals("")) {
@@ -63,59 +65,54 @@ public class SwaggySearch extends JFrame implements ActionListener {
             formatAndInsertButton(button);
             return;
         }
-				try {
-					searchFunction(text);
-				}
-				catch (IOException e) {}
-			}
+		try {
+			searchFunction(text);
+		} catch (IOException e) {}
+	}
 
-			public void searchFunction(String text) throws IOException {
-				try {
-					String correctedSearchTerm = new FuzzySearch().correct(text);
+	public void searchFunction(String text) throws IOException {
+		try {
+			String correctedSearchTerm = new FuzzySearch().correct(text);
 	        WikiSearch search = searchFromString(correctedSearchTerm);
-					if (! text.equals(correctedSearchTerm)) {
-						JButton button = new JButton();
-						button.setText("We found your closest match to be " + correctedSearchTerm);
-						formatAndInsertButton(button);
-					}
+			if (! text.equals(correctedSearchTerm)) {
+				JButton button = new JButton();
+				button.setText("We found your closest match to be " + correctedSearchTerm);
+				formatAndInsertButton(button);
+			}
 	        List<Entry<String, Integer>> entries = search.sort();
 
 	        class OpenUrlAction implements ActionListener {
-	            @Override public void actionPerformed(ActionEvent e) {
-	                open(uri);
-	            }
+    	        @Override public void actionPerformed(ActionEvent e) {
+    	            open(uri);
+    	        }
 	        }
 
-	        // handle empty cases
-	        if (entries.isEmpty()) {
-	            JButton button = new JButton();
-	            button.setText("Sorry, we found no matches for your search terms.");
-	            formatAndInsertButton(button);
-	        } else {
-	            try {
-	                doc.insertString(0, "Top 10 search results:" + newline, null);
-	            } catch (Exception e) {}
-	        }
+    	    // handle empty cases
+    	    if (entries.isEmpty()) {
+    	        JButton button = new JButton();
+    	        button.setText("Sorry, we found no matches for your search terms.");
+    	        formatAndInsertButton(button);
+    	    } else {
+    	        try {
+    	            doc.insertString(0, "Top 10 search results:" + newline, null);
+    	        } catch (Exception e) {}
+    	    }
 
-	        // limit to ten results
-	        for (Entry<String, Integer> entry: firstTen(entries)) {
-	            JButton button = new JButton();
-	            button.setText(entry.getKey());
-	            hyperlinkButton(button);
-	            formatAndInsertButton(button);
-	        }
+    	    // limit to ten results
+            for (Entry<String, Integer> entry: firstTen(entries)) {
+                JButton button = new JButton();
+    	        button.setText(entry.getKey());
+    	        hyperlinkButton(button);
+    	        formatAndInsertButton(button);
+            }
 
 	        textField.selectAll();
-	        textPane.setCaretPosition(textPane.getDocument().getLength());
-	    }
-			catch (IOException e) {
-				System.out.println("error");
-			}
-
-				}
-				//calling the search here
-				//compile the dictionary and call the class
-
+    	    textPane.setCaretPosition(textPane.getDocument().getLength());
+    	}
+		catch (IOException e) {
+			System.out.println("error");
+		}
+	}
 
     private void formatAndInsertButton(JButton button) {
         button.setHorizontalAlignment(SwingConstants.LEFT);

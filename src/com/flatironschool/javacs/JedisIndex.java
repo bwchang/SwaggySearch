@@ -49,6 +49,10 @@ public class JedisIndex {
 		return "TermCounter:" + url;
 	}
 
+	private String sizeKey() {
+		return "Size";
+	}
+
 	/**
 	 * Checks whether we have a TermCounter for a given URL.
 	 * 
@@ -58,6 +62,11 @@ public class JedisIndex {
 	public boolean isIndexed(String url) {
 		String redisKey = termCounterKey(url);
 		return jedis.exists(redisKey);
+	}
+
+	/** Returns the number of pages indexed. */
+	public int size() {
+		return Integer.parseInt(jedis.get(sizeKey()));
 	}
 	
 	/**
@@ -149,6 +158,14 @@ public class JedisIndex {
 	 */
 	public void indexPage(String url, Elements paragraphs) {
 		System.out.println("Indexing " + url);
+
+		if (!isIndexed(url)) {
+			if (jedis.get(sizeKey()) == null) {
+				jedis.set(sizeKey(), "0");
+			} else {
+				jedis.incr(sizeKey());
+			}
+		}
 		
 		// make a TermCounter and count the terms in the paragraphs
 		TermCounter tc = new TermCounter(url);
@@ -305,7 +322,9 @@ public class JedisIndex {
 		//index.deleteTermCounters();
 		//index.deleteURLSets();
 		//index.deleteAllKeys();
-		loadIndex(index);
+		//loadIndex(index);
+
+		System.out.println(index.size());
 		
 		Map<String, Integer> map = index.getCountsFaster("the");
 		for (Entry<String, Integer> entry: map.entrySet()) {
@@ -323,11 +342,11 @@ public class JedisIndex {
 		WikiFetcher wf = new WikiFetcher();
 
 		String url = "https://en.wikipedia.org/wiki/Java_(programming_language)";
-		Elements paragraphs = wf.readWikipedia(url);
+		Elements paragraphs = wf.fetchWikipedia(url);
 		index.indexPage(url, paragraphs);
 		
 		url = "https://en.wikipedia.org/wiki/Programming_language";
-		paragraphs = wf.readWikipedia(url);
+		paragraphs = wf.fetchWikipedia(url);
 		index.indexPage(url, paragraphs);
 	}
 }
